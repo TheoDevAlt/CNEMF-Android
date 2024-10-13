@@ -36,7 +36,9 @@ class ModifierGroup
 		'stealth' => Stealth,
 		'scale' => Scale,
 		// YOU NEVER STOOD A CHANCE
-		'infinite' => Infinite
+		'infinite' => Infinite,
+        'schmovindrunk' => SchmovinDrunk,
+        'schmovintipsy' => SchmovinTipsy
     ];
 	private var MODIFIER_REGISTRERY:Map<String, Class<Modifier>> = GLOBAL_MODIFIERS;
 
@@ -50,9 +52,9 @@ class ModifierGroup
 	public function new() {}
 
 	// just render mods with the perspective stuff included
-	public function getPath(pos:Vector3D, data:NoteData):Vector3D
+	public function getPath(pos:Vector3D, data:NoteData, ?posDiff:Float = 0):Vector3D
 	{
-		pos = renderMods(pos, data);
+		pos = renderMods(pos, data, posDiff);
 		pos.z *= 0.001;
 		return ModchartUtil.perspective(pos);
 	}
@@ -90,10 +92,10 @@ class ModifierGroup
 
 		return visuals;
 	}
-	public function renderMods(pos:Vector3D, data:NoteData):Vector3D
+	public function renderMods(pos:Vector3D, data:NoteData, ?posDiff:Float = 0):Vector3D
     {
 		// add the scroll
-		var scroll = new Vector3D(0, data.hDiff * 0.45 * ModchartUtil.getScrollSpeed());
+		var scroll = new Vector3D(0, (data.hDiff + posDiff) * 0.45 * ModchartUtil.getScrollSpeed());
 		scroll = ModchartUtil.rotate3DVector(
 			scroll,
 			getPercent('scrollAngleX', data.field),
@@ -114,7 +116,7 @@ class ModifierGroup
                 perc: 0.0,
                 sPos: Conductor.songPosition,
                 fBeat: Conductor.curBeatFloat,
-                hDiff: data.hDiff,
+                hDiff: data.hDiff + posDiff,
                 receptor: data.receptor,
                 field: data.field,
 				arrow: data.arrow
